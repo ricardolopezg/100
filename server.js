@@ -2,7 +2,7 @@ var express = require('express');
 
 // Create our app
 var app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 31000;
 
 // If http, passess. If https, changes to http.
 app.use(function(req, res, next) {
