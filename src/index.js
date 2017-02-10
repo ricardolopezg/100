@@ -7,10 +7,10 @@ import { browserHistory } from 'react-router'
 
 import Root from './components/Root.jsx'
 import configStore from './store'
-import io from './io';
+import io from './io'
 import './styles/main.css'
 
-const initialState = window.__INITIAL_STATE__ || undefined;
+const initialState = window.__INITIAL_STATE__ || undefined
 
 const socket = io();
 
