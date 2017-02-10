@@ -9,10 +9,10 @@
     "url": "git@github.com:ricardolopezg/100.git"
   },
   "scripts": {
-    "build": "rm -r build && NODE_ENV=production webpack -p",
+    "build": "NODE_ENV=production webpack",
     "serve": "webpack-dev-server",
-    "server": "node server.js",
-    "start": "node server.js",
+    "server": "node server/",
+    "start": "node server/server.js",
     "test": "mocha server/**/*.test.js"
   },
   "author": "100",
@@ -20,8 +20,13 @@
   "dependencies": {
     "axios": "^0.15.3",
     "babel-polyfill": "^6.22.0",
+    "bcryptjs": "^2.4.0",
     "body-parser": "^1.16.0",
+    "crypto-js": "^3.1.9-1",
     "express": "^4.14.0",
+    "gridfs-stream": "^1.1.1",
+    "immutable": "^3.8.1",
+    "jsonwebtoken": "^7.2.1",
     "mongodb": "^2.2.22",
     "mongoose": "^4.8.1",
     "react": "^15.4.2",
@@ -29,8 +34,12 @@
     "react-redux": "^5.0.2",
     "react-router": "^2.0.0",
     "redux": "^3.6.0",
+    "redux-actions": "^1.2.1",
+    "redux-immutable": "^3.0.11",
     "redux-logger": "^2.7.4",
     "redux-thunk": "^2.2.0",
+    "socket.io": "^1.7.2",
+    "underscore": "^1.8.3",
     "validator": "^6.2.1"
   },
   "devDependencies": {
@@ -51,6 +60,7 @@
     "rewire": "^2.5.2",
     "supertest": "^3.0.0",
     "webpack": "^2.2.0",
+    "webpack-dev-middleware": "^1.10.0",
     "webpack-dev-server": "^2.2.0"
   }
 }
