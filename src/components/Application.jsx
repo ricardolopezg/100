@@ -1,27 +1,11 @@
 'use strict'
 
 import React, { PureComponent, PropTypes } from 'react'
-import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import actions from '../store/actions'
-
-function Navigation (props) {
-  const { children = null } = props
-  return (<section className="layout" id="nav">
-    <header>
-      <Link to="/">
-        <h1><i><h1>Welcome to 100!</h1></i></h1>
-      </Link>
-      <Link to="/todos">Todos</Link>
-    </header>
-    <section id="main-content">{children}</section>
-    <footer>
-      <h6>{`Copyright © ${new Date().getFullYear()} 100 L.L.C. All Rights Reserved.`}</h6>
-    </footer>
-  </section>)
-}
+import Navigation from './Navigation.jsx'
 
 class Application extends PureComponent {
   constructor (props) {

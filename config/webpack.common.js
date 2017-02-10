@@ -9,19 +9,18 @@ const publicPath = path.join(__dirname, '..', 'public');
 const srcPath = path.join(__dirname, '..', 'src');
 
 const extractCSS = new extractTextWebpackPlugin({
-  filename: 'styles/[name].[hash].css'
+  filename: 'styles/[name].[contenthash].css'
 });
 
 module.exports = {
   target: 'web',
   context: contextPath,
   entry: {
-    app: [
-      'babel-polyfill',
-      srcPath + '/index.js'
-    ],
+    app: [ srcPath + '/index.js' ],
     vendor: [
       'axios',
+      'babel-polyfill',
+      'immutable',
       'react',
       'react-dom',
       'react-router',
@@ -49,8 +48,13 @@ module.exports = {
   },
   module: {
     rules: [{
-      test: /\.css$/i,
-      use: extractCSS.extract('css')
+      test: /\.css$/,
+      use: extractCSS.extract([{
+        loader: 'css',
+        options: {
+          importLoaders: 1
+        }
+      }, 'postcss'])
     },{
       test: /\.jsx$|\.js$/,
       exclude: /node_modules/,
@@ -61,6 +65,9 @@ module.exports = {
     },{
       test: /\.svg$/,
       use: 'file'
+    },{
+      test: /\.(eot|svg|ttf|woff|woff2)$/,
+      use: 'file?name=fonts/[name].[ext]'
     }],
   },
   plugins: [

@@ -1,6 +1,11 @@
-main#app {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+a {
+  color: inherit;
+  text-decoration: inherit;
+  outline: none;
+  /* define active links here with class */
+}
+
+button {
+  background: none;
+  border: none;
 }

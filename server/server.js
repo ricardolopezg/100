@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT;
 const PUBLIC_PATH = process.env.PUBLIC_PATH = path.join(__dirname, '../public');
+const ASSETS_PATH = process.env.ASSETS_PATH = path.join(__dirname, '../assets');
 
 const app = express();
 const server = start(app);
@@ -28,6 +29,7 @@ function start (app, options) {
 app.disable('x-powered-by');
 
 app.use(express.static(PUBLIC_PATH));
+app.use(express.static(ASSETS_PATH));
 app.use(bodyParser.json());
 
 // API based on routes.
@@ -50,7 +52,7 @@ io.on('connection', (socket) => {
       console.log(e);
     }
   });
-  socket.on('message', (data) => {
+  socket.on('message', (data, callback) => {
     console.log('User sent a message: ', JSON.stringify(data, undefined, 2));
   });
   socket.on('disconnect', () => {

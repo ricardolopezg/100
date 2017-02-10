@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+  z-index: inherit;
+}
+
+html {
+  font-family: Vadodara;
+}
+
+body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+div#app {
+  position: relative;
+  padding: 1em;
+  width: 100%;
+  & main {
+    width: inherit;
+    height: inherit;
+  }
+}

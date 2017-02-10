@@ -1,22 +1,24 @@
 {
   "name": "100",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": true,
-  "description": "Simple React app",
-  "main": "index.js",
+  "description": "1000000000000",
+  "main": "server/index.js",
+  "author": "100",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:ricardolopezg/100.git"
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "serve": "webpack-dev-server",
-    "server": "node server/",
-    "start": "node server/server.js",
-    "test": "mocha server/**/*.test.js"
+    "server": "node server/server.js",
+    "server-watch": "nodemon --exec 'npm run server'",
+    "start": "node server",
+    "start-watch": "nodemon --exec 'npm start'",
+    "test": "mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
   },
-  "author": "100",
-  "license": "MIT",
   "dependencies": {
     "axios": "^0.15.3",
     "babel-polyfill": "^6.22.0",
@@ -43,24 +45,34 @@
     "validator": "^6.2.1"
   },
   "devDependencies": {
+    "autoprefixer": "^6.7.2",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-0": "^6.22.0",
     "babel-register": "^6.22.0",
+    "chai": "^3.5.0",
+    "chai-jquery": "^2.0.0",
     "css-loader": "^0.23.1",
     "expect": "^1.20.2",
     "extract-text-webpack-plugin": "^2.0.0-rc.0",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.26.0",
+    "jquery": "^3.1.1",
+    "jsdom": "^9.10.0",
     "json-loader": "^0.5.4",
     "mocha": "^3.2.0",
+    "postcss": "^5.2.12",
+    "postcss-cssnext": "^2.9.0",
+    "postcss-discard-comments": "^2.0.4",
+    "postcss-loader": "^1.2.2",
+    "react-addons-test-utils": "^15.4.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "rewire": "^2.5.2",
     "supertest": "^3.0.0",
     "webpack": "^2.2.0",
     "webpack-dev-middleware": "^1.10.0",
-    "webpack-dev-server": "^2.2.0"
+    "webpack-hot-middleware": "^2.16.1"
   }
 }

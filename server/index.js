@@ -4,6 +4,8 @@ require('babel-register')({
   ignore: /(node_modules)/
 });
 
+const path = require('path');
+
 const env = process.env.NODE_ENV || 'development';
 
 const SSR = require('./ssr').default;
@@ -16,9 +18,17 @@ if (env !== 'production') {
   if (env === 'development') {
     const webpack = require('webpack');
     const webpackMiddleware = require("webpack-dev-middleware");
+    const webpackHotMiddleware = require("webpack-hot-middleware");
     const webpackConfig = require('./../webpack.config.js');
-    const webpackServer = webpackMiddleware(webpack(webpackConfig), {
-      publicPath: webpackConfig.publicPath,
+    webpackConfig.entry.app = ([
+      'webpack-hot-middleware/client?path=/__hmr&timeout=2000&dynamicPublicPath=true',
+      'react-hot-loader/patch',
+      `${__dirname}/ssr/hmr.js`
+    ]);
+    webpackConfig.output.publicPath = '';
+    const webpackCompiler = webpack(webpackConfig);
+    const webpackServer = webpackMiddleware(webpackCompiler, {
+      publicPath: webpackConfig.output.publicPath,
       serverSideRender: true,
       lazy: false,
       quiet: false,
@@ -30,7 +40,12 @@ if (env !== 'production') {
     });
 
     app.use(webpackServer);
-    app.use((req, res, next) => {
+    app.use(webpackHotMiddleware(webpackCompiler, {
+      log: console.log,
+      path: '/__hmr',
+      heartbeat: 1000
+    }));
+    app.use('*',(req, res, next) => {
       const output = res.locals.webpackStats.toJson().assetsByChunkName;
       const assets = {
         vendor: output.vendor instanceof Array ? output.vendor.map(path => `<script src="${path}"></script>`).join('') : `<script src="${output.vendor}"></script>`,
@@ -63,20 +78,21 @@ if (env !== 'production') {
       }).catch(error => res.status(500).send(error.message));
     });
   }
-
-  module.exports = { app, server, io };
 } else {
   const { app, server, io } = require('./server.js');
-
-  app.use((req, res, next) => {
+  
+  app.use('*', (req, res, next) => {
     // TODO change asset routes dynamically, add build step to write config file with paths.
-    const output = res.locals.webpackStats.toJson().assetsByChunkName;
-    const assets = {
-      js: output.app.filter(path => path.endsWith('.js')).map(path => `<script src="${path}"></script>`),
-      css: output.app.filter(path => path.endsWith('.css')).map(path => `<link rel="stylesheet" href="${path}" />`)
-    };
+    // Or store them in memory, rebuild with restart.
 
-    SSR(req.url, assets, {}).then(resolution => {
+    SSR(req.url, {
+      manifest: ([]).join(''),
+      vendor: ([]).join(''),
+      css: ([]).join(''),
+      js: ([]).join('')
+    }, {
+      // initialState
+    }).then(resolution => {
       const { type, html } = resolution;
       return type === 'redirect' ? (
         res.redirect(302, redirectLocation.pathname + redirectLocation.search)
@@ -85,6 +101,6 @@ if (env !== 'production') {
       ): type === 'not found' && res.status(404).send('Not found') || res.status(500).end();
     }).catch(error => res.status(500).send(error.message));
   });
-
-  module.exports = { app, server, io };
 }
+
+module.exports = { app, server, io };

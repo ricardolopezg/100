@@ -52,7 +52,7 @@ export default class Media extends PureComponent {
     return (<div>
       <section>
         <header>
-          <p>MIME type: {mimeType || 'none'}</p>
+          <p>MIME: {mimeType || 'none'}</p>
           <p>Bits Per Second: {bitsPerSecond || 0}</p>
           <p>Audio Bits Per Second: {audioBitsPerSecond || 0}</p>
           <p>Video Bits Per Second: {videoBitsPerSecond || 0}</p>
