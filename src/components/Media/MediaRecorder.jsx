@@ -64,10 +64,10 @@ export default class Media extends PureComponent {
                 mimeType: event.target.value
               });
             }}>
-              <option vlaue="audio/ogg">Audio: OGG</option>
-              <option vlaue="audio/mpeg">Audio: MPEG</option>
-              <option vlaue="video/mp4">Video: MP4</option>
-              <option vlaue="video/mpeg">Video: MPEG</option>
+              <option value="audio/ogg">Audio: OGG</option>
+              <option value="audio/mpeg">Audio: MPEG</option>
+              <option value="video/mp4">Video: MP4</option>
+              <option value="video/mpeg">Video: MPEG</option>
             </select>
           </label>
         </p>
@@ -77,10 +77,10 @@ export default class Media extends PureComponent {
               bitsPerSecond: event.target.value
             });
           }}>
-            <option vlaue="128000">128 kbps</option>
-            <option vlaue="192000">192 kbps</option>
-            <option vlaue="256000">256 kbps</option>
-            <option vlaue="320000">320 kbps</option>
+            <option value="128000">128 kbps</option>
+            <option value="192000">192 kbps</option>
+            <option value="256000">256 kbps</option>
+            <option value="320000">320 kbps</option>
           </select></label>
         </p>
         <p>
@@ -89,10 +89,10 @@ export default class Media extends PureComponent {
               audioBitsPerSecond: event.target.value
             });
           }}>
-            <option vlaue="128000">128 kbps</option>
-            <option vlaue="192000">192 kbps</option>
-            <option vlaue="256000">256 kbps</option>
-            <option vlaue="320000">320 kbps</option>
+            <option value="128000">128 kbps</option>
+            <option value="192000">192 kbps</option>
+            <option value="256000">256 kbps</option>
+            <option value="320000">320 kbps</option>
           </select></label>
         </p>
         <p>
@@ -101,9 +101,9 @@ export default class Media extends PureComponent {
               videoBitsPerSecond: event.target.value
             });
           }}>
-            <option vlaue={(320 * 240) * 24}>320 x 240</option>
-            <option vlaue={(480 * 640) * 24}>480 x 640</option>
-            <option vlaue={(1024 * 768) * 24}>1024 x 768</option>
+            <option value={(320 * 240) * 24}>320 x 240</option>
+            <option value={(480 * 640) * 24}>480 x 640</option>
+            <option value={(1024 * 768) * 24}>1024 x 768</option>
           </select></label>
         </p>
         <p><button onClick={event => {

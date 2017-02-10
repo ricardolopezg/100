@@ -16,37 +16,23 @@ export default function renderHTML (location, assets, initialState) {
       if (error) return reject(error);
 
       return redirectLocation ? resolve({
-        type: 'redirect',
         path: redirectLocation.pathname + redirectLocation.search
       }) : renderProps ?(
-        resolve({ type: 'html', html: renderMarkup(renderProps, assets, initialState) })
+        resolve({ html: renderMarkup(renderProps, assets, initialState) })
       ): resolve({ type: 'not found' })
     });
   });
 }
 
 function renderMarkup (renderProps, assets, initialState) {
-  const state = fromJS(initialState || {
-    todo: {
-      todos: [],
-      todo: {
-        id: '',
-        text: '',
-        title: '',
-        createAt: '',
-        updateAt: '',
-        completed: false
-      },
-    }//, jwtToken: 'public token'
-  }),
+  const state = initialState ? fromJS(initialState) : undefined,
   store = createStore(reducers, state),
   html = renderToString(
     <Provider store={store}>
       <RouterContext {...renderProps} />
     </Provider>
   ),
-  title = '100',
-  vendor =  /*assets.manifest.concat(assets.vendor).join('')*/ '';
+  title = '100';
 
   return (`
     <!doctype html>

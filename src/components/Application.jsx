@@ -7,6 +7,22 @@ import { bindActionCreators } from 'redux'
 
 import actions from '../store/actions'
 
+function Navigation (props) {
+  const { children = null } = props
+  return (<section className="layout" id="nav">
+    <header>
+      <Link to="/">
+        <h1><i><h1>Welcome to 100!</h1></i></h1>
+      </Link>
+      <Link to="/todos">Todos</Link>
+    </header>
+    <section id="main-content">{children}</section>
+    <footer>
+      <h6>{`Copyright © ${new Date().getFullYear()} 100 L.L.C. All Rights Reserved.`}</h6>
+    </footer>
+  </section>)
+}
+
 class Application extends PureComponent {
   constructor (props) {
     super(props)
@@ -15,29 +31,17 @@ class Application extends PureComponent {
       fullscreen: false
     }
   }
-  render () {
-    const { props, state, children = props.children, Navigation } = this
-    return (<main id="main" role="main" ref={m => m ? this.main = m : null}>
-      <Navigation>{children ? React.cloneElement(children, {
-        todo: props.todo
-      }) : null}</Navigation>
-    </main>)
-  }
+  //componentDidMount() { console.log(this.main); }
 
-  Navigation (props) {
-    const { children = null } = props
-    return (<section className="layout" id="nav">
-      <header>
-        <Link to="/">
-          <h1><i><h1>Welcome to 100!</h1></i></h1>
-        </Link>
-        <Link to="/todos">Todos</Link>
-      </header>
-      <section id="main-content">{children}</section>
-      <footer>
-        <h6>{`Copyright © ${new Date().getFullYear()} Opperoo L.L.C. All Rights Reserved.`}</h6>
-      </footer>
-    </section>)
+  render () {
+    const { props, state } = this
+    return (<main id="main" role="main" ref={m => m ? this.main = m : null}>
+      <Navigation>{
+        props.children ? React.cloneElement(props.children, {
+          todo: props.todo
+        }) : null
+      }</Navigation>
+    </main>)
   }
 }
 
@@ -45,6 +49,7 @@ Application.propTypes = {
   posts: PropTypes.array,
   http: PropTypes.object,
   todo: PropTypes.object,
+  tokens: PropTypes.object,
   user: PropTypes.object
 }
 Application.defaultProps = {}

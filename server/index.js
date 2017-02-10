@@ -6,12 +6,12 @@ require('babel-register')({
 
 const env = process.env.NODE_ENV || 'development';
 
-const { app, server, io } = require('./server.js');
-const SSR = require('./ssr/matchRoute.js').default;
-const PORT = process.env.PORT || 3000;
+const SSR = require('./ssr').default;
 
 if (env !== 'production') {
   require('./../config/config.js');
+
+  const { app, server, io } = require('./server.js');
 
   if (env === 'development') {
     const webpack = require('webpack');
@@ -23,7 +23,7 @@ if (env !== 'production') {
       lazy: false,
       quiet: false,
       stats: {
-        reasons: true,
+        // reasons: true,
         errors: true,
         colors: true
       }
@@ -54,16 +54,20 @@ if (env !== 'production') {
           jwt: req.jwttoken
         }
       }).then(resolution => {
-        const { type, html } = resolution;
-        return type === 'redirect' ? (
-          res.redirect(302, redirectLocation.pathname + redirectLocation.search)
-        ) : type === 'html' ?(
+        const { path, html } = resolution;
+        return path ? (
+          res.redirect(302, path)
+        ) : html ?(
           res.status(200).send(html)
         ): res.status(404).send('Not found');
       }).catch(error => res.status(500).send(error.message));
     });
   }
+
+  module.exports = { app, server, io };
 } else {
+  const { app, server, io } = require('./server.js');
+
   app.use((req, res, next) => {
     // TODO change asset routes dynamically, add build step to write config file with paths.
     const output = res.locals.webpackStats.toJson().assetsByChunkName;
@@ -81,4 +85,6 @@ if (env !== 'production') {
       ): type === 'not found' && res.status(404).send('Not found') || res.status(500).end();
     }).catch(error => res.status(500).send(error.message));
   });
+
+  module.exports = { app, server, io };
 }
