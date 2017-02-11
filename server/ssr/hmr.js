@@ -19,18 +19,16 @@ const appElement = document.getElementById('app');
 const socket = io();
 
 function render (App) {
-  console.log(module);
   return ReactDOM.render(
     <AppContainer key={Math.random()}>
       <App store={store} history={browserHistory} />
     </AppContainer>,
     appElement
-  )
+  );
 }
 
 render(Root);
 
-// Hot Module Replacement API
 if (module.hot) {
   module.hot.accept('./../../src/components/Root.jsx', () => {
     render(require('./../../src/components/Root.jsx').default);

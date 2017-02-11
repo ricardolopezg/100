@@ -34,8 +34,6 @@ function renderMarkup (renderProps, assets, initialState, document) {
     </Provider>
   );
 
-  //console.log('renderProps: ', renderProps);
-
   return (`
     <!doctype html>
     <html lang="en">
@@ -46,7 +44,7 @@ function renderMarkup (renderProps, assets, initialState, document) {
 
         <script type="text/javascript" src="/socket.io/socket.io.js"></script>
         ${ assets.manifest + assets.vendor }
-        ${ assets.css.join('') }
+        ${ assets.css }
         <script>
           window.__INITIAL_STATE__ = ${
             JSON.stringify(store.getState())
@@ -57,7 +55,7 @@ function renderMarkup (renderProps, assets, initialState, document) {
         <div id="app">${
           html
         }</div>
-        ${ assets.js.join('') }
+        ${ assets.js }
       </body>
     </html>
   `);

@@ -4,6 +4,7 @@ require('babel-register')({
   ignore: /(node_modules)/
 });
 
+const fs = require('fs');
 const path = require('path');
 
 const env = process.env.NODE_ENV || 'development';
@@ -80,19 +81,29 @@ if (env !== 'production') {
   }
 } else {
   const { app, server, io } = require('./server.js');
-  
-  app.use('*', (req, res, next) => {
-    // TODO change asset routes dynamically, add build step to write config file with paths.
-    // Or store them in memory, rebuild with restart.
 
-    SSR(req.url, {
-      manifest: ([]).join(''),
-      vendor: ([]).join(''),
-      css: ([]).join(''),
-      js: ([]).join('')
-    }, {
-      // initialState
-    }).then(resolution => {
+  const scripts = fs.readdirSync(__dirname + '/public');
+  const styles = fs.readdirSync(__dirname + '/public/styles');
+  const resources = {
+    js: scripts.filter(src => !!src.startsWith('app')),
+    manifest: scripts.filter(src => !!src.startsWith('manifest')),
+    vendor: scripts.filter(src => !!src.startsWith('vendor')),
+    css: styles.join('')
+  };
+
+  const assets = Object.keys(resources).reduce((a,b) => {
+    a[b] = resources[b] instanceof Array ? resources[b].map((src)=> source(b, src)).join('') : source(b);
+    return a;
+  }, {});
+  
+  function source (b, src) {
+    return b === 'css' ? `<link rel="stylesheet" href="${src || b}" />` : `<script src="${src || b}"></script>`;
+  }
+
+  const initialState = undefined;
+
+  app.use('*', (req, res, next) => {
+    SSR(req.url, assets, initialState).then(resolution => {
       const { type, html } = resolution;
       return type === 'redirect' ? (
         res.redirect(302, redirectLocation.pathname + redirectLocation.search)

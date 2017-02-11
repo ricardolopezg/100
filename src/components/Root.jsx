@@ -8,7 +8,7 @@ import routes from '../routes'
 
 const Root = ({ store, history }) => (
   <Provider store={store}>
-    <Router history={history} routes={routes} />
+    <Router history={history} routes={routes} createElement={(Component, props) => <Component {...props}/>} />
   </Provider>
 )
 
