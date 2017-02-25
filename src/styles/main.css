@@ -1,0 +1,11 @@
+a {
+  color: inherit;
+  text-decoration: inherit;
+  outline: none;
+  /* define active links here with class */
+}
+
+button {
+  background: none;
+  border: none;
+}

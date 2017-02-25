@@ -1,0 +1,8 @@
+@font-face {
+  font-family: Vadodara;
+  src: local('HindVadodara-Regular'), url("/assets/fonts/Hind_Vadodara/HindVadodara-Regular.ttf");
+}
+@font-face {
+  font-family: Vadodara-Light;
+  src: local('HindVadodara-Light'), url("/assets/fonts/Hind_Vadodara/HindVadodara-Light.ttf");
+}
