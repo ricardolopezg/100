@@ -101,8 +101,6 @@ if (env !== 'production') {
 
   module.exports = { app, server, io };
 } else {
-  process.env.PORT = 3000;
-  process.env.JWT_SECRET = 'openseseme';
   const { app, server, io } = require('./server.js');
 
   const scripts = fs.readdirSync(path.resolve(__dirname, '..', 'public'));
