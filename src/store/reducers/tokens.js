@@ -12,7 +12,7 @@ export default function tokens (state = {
   switch (type) {
     default: return state;
     case '@@redux/INIT': {
-      if (window && 'localStorage' in window) {
+      if (localStorage) {
         state._supported = true;
         for (var i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i), value = localStorage.getItem(key);
