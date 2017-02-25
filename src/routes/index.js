@@ -20,7 +20,6 @@ import Messenger, {
 } from '../components/Messenger'
 
 import Todos from '../components/Todos'
-import Media from '../components/Media/MediaRecorder.jsx'
 import PostMaster from '../components/Posts/Messenger.jsx'
 
 import ServerLog from '../components/Log'
@@ -50,7 +49,7 @@ export default (
       <Route name="Thread" path=":id" component={Composer} />
     </Route>
 
-    <Route name="Media" path="media" component={Media} />
+    <Route name="Media" path="media" />
     <Route name="Todo" path="todo" component={Todos} />
 
     <Route name="Server Log" path="log" component={ServerLog} />
