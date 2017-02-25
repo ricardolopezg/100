@@ -20,16 +20,14 @@ module.exports = {
     vendor: [
       'axios',
       'babel-polyfill',
-      'immutable',
       'react',
       'react-dom',
       'react-router',
+      'react-router-redux',
       'react-redux',
       'redux',
-      'redux-actions',
-      'redux-immutable',
-      'redux-logger',
-      'redux-thunk'
+      'redux-thunk',
+      'underscore'
     ]
   },
   output: {
@@ -76,6 +74,5 @@ module.exports = {
       names: ['vendor', 'manifest'],
       filename: '[name].[hash].js',
     })
-  ],
-  devtool: 'inline-sourcemap'
+  ]
 };

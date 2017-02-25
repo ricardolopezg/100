@@ -1,31 +1,22 @@
 'use strict'
 
-import axios from 'axios'
-import Immutable, { fromJS } from 'immutable'
-import { createStore, applyMiddleware, compose } from 'redux'
-import _thunk from 'redux-thunk'
-import _logger from 'redux-logger'
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux'
+import { routerReducer as routing, routerMiddleware } from 'react-router-redux'
+import thunk from 'redux-thunk'
 
 import rootReducer from './reducers'
-import { socket } from './enhancers'
+import reduxIO from './redux.io'
+import { ioMessage } from './middleware'
 
-export default function configureStore(initialState, { thunk, config }) {
-  const state = initialState && Immutable.fromJS(initialState) || undefined
+export default function configureStore(initialState, { history }) {
+  const reducers = combineReducers({ routing, socket: reduxIO(io), ...rootReducer })
+  const state = initialState || undefined
 
-  return createStore(
-    rootReducer,
-    state,
-    applyMiddleware(
-      _thunk.withExtraArgument({
-        request: window ? axios.create({
-          baseURL: window.location.origin,
-          headers: {
-            'X-Custom-Header': 'foobar'
-          }
-        }) : null,
-        ...thunk
-      }),
-      _logger({ stateTransformer: state => state.toJS() })
-    )
+  const createEnhancedStore = applyMiddleware(
+    routerMiddleware(history), ioMessage, thunk
+  )(createStore)
+
+  return createEnhancedStore(
+    reducers, state
   )
 }

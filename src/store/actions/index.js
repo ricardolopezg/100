@@ -1,11 +1,8 @@
 'use strict'
 
-import http from './http'
-import socket from './socket'
 import todo from './todos'
+import io from './io'
 
 export default {
-  http,
-  socket,
-  todo
+  io, todo
 }

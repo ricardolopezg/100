@@ -2,40 +2,37 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { browserHistory } from 'react-router';
+import { browserHistory as history } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 
-import Root from './../../src/components/Root.jsx';
-import configStore from './../../src/store';
-import io from './../../src/io';
 import './../../src/styles/index.css';
-
-const initialState = window.__INITIAL_STATE__ || undefined;
-
-const store = configStore(initialState, { thunk: { socket, io, }, config : {} });
+import Root from './../../src/components/Root.jsx';
+import configStore, { DevTools } from './hmr.store.js';
 
 const appElement = document.getElementById('app');
+const initialState = window.__INITIAL_STATE__ || undefined;
 
-const socket = io();
+const store = configStore(initialState, { history });
+const story = syncHistoryWithStore(history, store);
 
-function render (App) {
+function render (App, store, history) {
   return ReactDOM.render(
     <AppContainer key={Math.random()}>
-      <App store={store} history={browserHistory} />
+      <div>
+        <App store={store} history={history} />
+        <DevTools store={store} />
+      </div>
     </AppContainer>,
     appElement
   );
 }
 
-render(Root);
+render(Root, store, story);
 
 if (module.hot) {
   module.hot.accept('./../../src/components/Root.jsx', () => {
-    render(require('./../../src/components/Root.jsx').default);
-  });
-
-  module.hot.accept('./../../src/store/reducers', () => {
-    const nextRootReducer = require('./../../src/store/reducers/index').default;
-    store.replaceReducer(nextRootReducer);
+    const nextRoot = require('./../../src/components/Root.jsx').default;
+    render(nextRoot, store, story);
   });
 }

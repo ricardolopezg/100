@@ -1,19 +1,20 @@
 import React, { PropTypes } from 'react'
-import { Link } from 'react-router'
+import { Link, IndexLink } from 'react-router'
 
 export default function Navigation (props) {
-  const { children = null } = props
-  return (<section className="layout" id="nav">
-    <header>
-      <Link to="/">
-        <h1><i><h1>Welcome to 100!</h1></i></h1>
-      </Link>
-      <Link to="/todos"><img src="images/todo_list1600.png" height="60px" /></Link>
-      <Link to="/messenger"><img src="images/aim.logo.png" height="60px" /></Link>
+  const { children = null, user = false } = props
+  return (
+    <header className="menu">
+      <IndexLink to="/"><h1><i>100</i></h1></IndexLink>
+      <Link to="/login"><h2>Login</h2></Link>
+      <Link to="/register"><h2>Sign Up</h2></Link>
+      <Link to="/triage"><h2>Help Desk</h2></Link>
+      <Link to="/account"><h2>Account</h2></Link>
+      <Link to="/messenger"><h2>Message <img src="images/aim.logo.png" height="24px" /></h2></Link>
+      <Link to="/posts"><h2>Posts</h2></Link>
+      <Link to="/media"><h2>Media</h2></Link>
+      <Link to="/todo"><h2>Todo</h2></Link>
+      <Link to="/log"><h2>Log</h2></Link>
     </header>
-    <section id="main-content">{children}</section>
-    <footer>
-      <h6>{`Copyright © ${new Date().getFullYear()} 100 L.L.C. All Rights Reserved.`}</h6>
-    </footer>
-  </section>)
+  )
 }

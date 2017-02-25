@@ -5,6 +5,10 @@ const Grid = require('gridfs-stream');
 
 const mongodb_uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/100';
 
+if (process.env.NODE_ENV !== 'production') {
+  mongoose.set('debug', true);
+}
+
 mongoose.gfs = null;
 mongoose.Promise = global.Promise;
 

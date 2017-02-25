@@ -3,18 +3,15 @@
 import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { browserHistory } from 'react-router'
+import { browserHistory as history } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import Root from './components/Root.jsx'
-import configStore from './store'
+import createStore from './store'
 import './styles/index.css'
 
-const initialState = window.__INITIAL_STATE__ || undefined
+const store = createStore((__INITIAL_STATE__ || undefined), { history })
 
-const socket = io();
+const story = syncHistoryWithStore(history, store)
 
-ReactDOM.render(<Root store={configStore(initialState, {
-  thunk: {
-    socket: socket,
-  }, config : {}
-})} history={browserHistory} />, document.getElementById('app'))
+ReactDOM.render(<Root store={store} history={story} />, document.getElementById('app'))

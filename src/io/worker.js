@@ -1,7 +1,11 @@
-io = new SharedWorker("http://localhost:3000/workers/socket.io.worker.js");
+'use strict';
 
-io.port.addEventListener("message", function(e) {
-     console.log("Got message: " + e.data);
- }, false);
-io.port.start();
-io.port.postMessage("start");
+export default function IO () {
+  ioWorker = new SharedWorker("http://localhost:3000/workers/socket.io.worker.js");
+  ioWorker.port.addEventListener("message", function(e) {
+       console.log("Got message: " + e.data);
+   }, false);
+  ioWorker.port.start();
+  ioWorker.port.postMessage("start");
+  return ioWorker;
+}

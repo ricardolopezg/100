@@ -4,7 +4,7 @@ export default class Poster extends PureComponent {
   constructor(props) {
     super(props);
 
-    thi.state = {
+    this.state = {
       type: '', // type of post.
       audio: [],
       video: [],

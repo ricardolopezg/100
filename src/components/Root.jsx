@@ -1,12 +1,12 @@
 'use strict'
 
 import React, { PropTypes } from 'react'
+import { Router, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
-import { Router } from 'react-router'
 
 import routes from '../routes'
 
-const Root = ({ store, history }) => (
+const Root = ({ store, history = browserHistory }) => (
   <Provider store={store}>
     <Router history={history} routes={routes} createElement={(Component, props) => <Component {...props}/>} />
   </Provider>
@@ -14,7 +14,7 @@ const Root = ({ store, history }) => (
 
 Root.propTypes = {
   store: PropTypes.object.isRequired,
-  history: PropTypes.object
+  history: PropTypes.object.isRequired
 }
 
 export default Root

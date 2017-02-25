@@ -95,9 +95,28 @@ button {
   background: none;
   border: none;
 }
+section.navigator {
+  display: block;
+  position: relative
+}
+section.navigator header.menu, section.navigator section.main-content {
+  display: inline-block;
+  position: relative;
+  top: 0;
+  bottom: 95%;
+  height: 95%
+}
+section.navigator header.menu {
+  width: 25%
+}
+section.navigator section.main-content {
+  width: 75%
+}
+section.navigator footer {
+  width: 100%;
+  height: 5%
+}
 article.message {
   
 }
 
-
-/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdHlsZXMvYXBwLjVkODg3Njg0NTEwNjdiMTllODIwNDBlMmFkNWVmMmUxLmNzcyIsInNvdXJjZVJvb3QiOiIifQ==*/

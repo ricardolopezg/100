@@ -1,26 +1,13 @@
-'use strict'
-
-import { fromJS } from 'immutable'
-import { handleActions } from 'redux-actions'
+'use strict';
 
 import {
   CREATE_TODO,
   DELETE_TODO,
-  CHANGE_TEXT,
-} from '../actions/todos'
+  UPDATE_TODO,
+  FETCH_TODOS
+} from '../actions/todos';
 
-const todoReducers = handleActions({
-  [CREATE_TODO]: (state) => {
-    let todos = state.get('todos').push(state.get('todo'));
-    return state.set('todos', todos)
-  },
-  [DELETE_TODO]: (state, { payload }) => (
-    state.set('todos', state.get('todos').splice(payload.index, 1))
-  ),
-  [CHANGE_TEXT]: (state, { payload }) => (
-    state.mergeDeep({ 'todo': payload })
-  )
-}, fromJS({
+export default function todos (state = {
   todos: [],
   todo: {
     id: '',
@@ -30,6 +17,17 @@ const todoReducers = handleActions({
     updateAt: '',
     completed: false
   }
-}))
+}, action) {
+  const {
+    type,
+    todos = []
+  } = action;
 
-export default todoReducers
+  switch (type) {
+    default : return state;
+    case FETCH_TODOS: return { ...state, todos };
+    case CREATE_TODO: return state;
+    case DELETE_TODO: return state;
+    case UPDATE_TODO: return state;
+  }
+}

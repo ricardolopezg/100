@@ -1,16 +1,16 @@
-'use strict'
+'use strict';
 
 const { Schema, model } = require('mongoose');
 
 const { ObjectID } = Schema.Types;
 
 const CommentsSchema = new Schema({
-  postId: ObjectID,
-  userId: ObjectID,
-  body: String // text
+  postId: { type: ObjectID },
+  userId: { type: ObjectID },
+  body: { type: String } // text
 });
 const MediaSchema = new Schema({
-  id: { type: String, id: ObjectID },
+  id: { type: ObjectID },
   label: { type: String }
 });
 const TagsSchema = new Schema({
@@ -35,12 +35,22 @@ const PostSchema = new Schema({
     trim: true
   },
   media: [MediaSchema],
-  tags: [TagsSchema],
+//  tags: [TagsSchema],
   flags: [FlagsSchema],
   private: {
     type: Boolean
   }
 });
+
+PostSchema.statics = {
+  createPost(uid, _post) {
+    const post = new Post({
+      uid, ..._post
+    });
+
+    return post.save();
+  }
+};
 
 const Post = model('Post', PostSchema);
 
