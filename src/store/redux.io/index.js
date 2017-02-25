@@ -111,7 +111,7 @@ export const ACTIONS = {
   connect: CREATE_SOCKET_ACTION
 };
 
-export default function redux_io (io, options = { transports: ['websocket'] }) {
+export default function redux_io (io = null, options = { transports: ['websocket'] }) {
   return function socketReducer (state = {
     io, options, namespaces: [], rooms: [], errors: []
   }, action) {

@@ -3,9 +3,12 @@
 import React from 'react';
 import ReactDOMServer, { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import { RouterContext, createMemoryHistory, match } from 'react-router';
+import { createStore, combineReducers } from 'redux'
+import { routerReducer as routing } from 'react-router-redux'
 
 import Root from './../../src/components/Root.jsx';
-import configStore from './../../src/store';
+import rootReducer from './../../src/store/reducers'
+import reduxIO from './../../src/store/redux.io'
 import routes from './../../src/routes';
 
 export default function renderHTML (location, assets, initialState, document) {
@@ -25,7 +28,9 @@ export default function renderHTML (location, assets, initialState, document) {
 function renderMarkup (renderProps, assets, initialState, document) {
   const { basename = 'http://localhost:3000', title = '100', location } = document || {},
   history = createMemoryHistory(location),
-  store = configStore((initialState || undefined), { history }),
+  store = createStore(
+    combineReducers({ routing, socket: reduxIO(), ...rootReducer }), initialState
+  ),
   html = renderToString(<Root store={store} history={history} />);
 
   return (`
