@@ -71,9 +71,26 @@ export default connect(
     return {
       dispatch,
       tokens: {
-        set: (key, value) => dispatch({ type: '@@tokens/SET', key, value }),
-        remove: (key) => dispatch({ type: '@@tokens/REMOVE', key }),
-        clear: () => dispatch({ type: '@@tokens/CLEAR' })
+        all: () => {
+          const set = [];
+          for (var i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i), value = localStorage.getItem(key);
+            set[key] = value;
+          }
+          return dispatch({ type: '@@tokens/KEYS', set })
+        },
+        set: (key, value) => {
+          localStorage.setItem(key, value);
+          return dispatch({ type: '@@tokens/SET', key, value });
+        },
+        remove: (key) => {
+          localStorage.removeItem(key, value);
+          return dispatch({ type: '@@tokens/REMOVE', key });
+        },
+        clear: () => {
+          localStorage.clear();
+          return dispatch({ type: '@@tokens/CLEAR' });
+        }
       },
       socket: bindActionCreators(ioACTIONS, dispatch),
       router: bindActionCreators({
