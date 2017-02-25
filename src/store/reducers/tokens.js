@@ -15,7 +15,7 @@ export default function tokens (state = {
       set.forEach(([key, value]) => state.local[key] = value);
       return {...state};
     }
-    case '@@tokens/SET': {...state, local: { ...state.local, [key]: value }};
+    case '@@tokens/SET': return {...state, local: { ...state.local, [key]: value } };
     case '@@tokens/REMOVE': {
       delete state.local[key];
       return {...state};
