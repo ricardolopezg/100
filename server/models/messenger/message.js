@@ -13,12 +13,14 @@ const MessageSchema = new Schema({
     minlength: 1,
     trim: true
   },
+  // the associated thread.
   thread: {
     type: String,
     required: true,
     minlength: 1,
     trim: true
   },
+  // an array with timestamps ( Date.now() ) being pushed with every edit.
   edited: [{ type: Number }]
 });
 
@@ -28,6 +30,9 @@ MessageSchema.statics = {
   },
   findByThread(thread) {
     return this.find({ thread });
+  },
+  findByUser(by) {
+    return this.find({ by });
   },
   create(by, message, thread) {
     const Msg = this;
@@ -49,11 +54,10 @@ MessageSchema.statics = {
 
 MessageSchema.methods = {
   edit(message) {
-    const msg = this;
-    msg.edited ? undefined : msg.edited = true;
-    msg.updatedAt = Date.now();
-    message ? msg.message = message : undefined;
-    return msg.save();
+    const now = Date.now();
+    this.edited ? this.edited.push(now) : [now];
+    message ? this.message = message : undefined;
+    return this.save();
   }
 };
 

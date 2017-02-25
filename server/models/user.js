@@ -81,10 +81,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', function(next) {
   const user = this;
   if (user.isModified('password')) {
-    user.hashPassword(user.password).then(user => {
-      return next();
-      // return Promise.resolve(user);
-    }).catch(e => next(e));
+    user.hashPassword(user.password).then(user => next()).catch(e => next(e));
   } else if (user.isModified('email.address') && user.email.verified) {
     user.email.verified = false;
     return next();
@@ -92,6 +89,7 @@ UserSchema.pre('save', function(next) {
   } else next();
 });
 UserSchema.post('remove', function(doc) {
+  // before delete, migrate data to dedicated collection for deactivations, always store documents.
   console.log('%s has been removed', doc._id);
 });
 
