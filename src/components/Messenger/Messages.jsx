@@ -43,7 +43,10 @@ export default function Messages (props) {
   // console.log('messages props: ',props);
   return thread ? (<section >
     <header >
-      <h3>{thread._id} <button type="button" style={{float:'right'}} onClick={() => actions.deleteThread(thread._id)}>Delete</button></h3>
+      <h3>
+        <span>{thread.title || thread._id}</span>
+        <button type="button" style={{float:'right'}} onClick={() => actions.deleteThread(thread._id)}>Delete</button>
+      </h3>
     </header>
     <ul className="message-list">{messages.filter(msg => {
       return msg.thread === thread._id;

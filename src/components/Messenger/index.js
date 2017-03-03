@@ -14,7 +14,10 @@ export default class Messenger extends React.Component {
     super(props);
 
     this.state = {
+      title: '',
       message: '',
+      member: '',
+      party: [],
       typing: false
     };
 
@@ -65,7 +68,7 @@ export default class Messenger extends React.Component {
   render() {
     const { props } = this;
     const {
-      emit, sendMessage, updateMessage, deleteMessage, fetchThreads, deleteThread, joinThread, leaveThread
+      emit, sendMessage, updateMessage, deleteMessage, fetchThreads, createThread, deleteThread, joinThread, leaveThread
     } = this;
     const { threads, messages, events, typing, party, thread, actions } = props.messenger || {};
     return (<section className="messenger">
@@ -76,11 +79,15 @@ export default class Messenger extends React.Component {
       </header>
       {React.cloneElement(props.children, {
         threads, messages, events, typing, party, thread, composer: {
+          onTitleChange: title => this.setState({ title }), title: this.state.title,
           onChange: message => this.setState({ message }), message: this.state.message,
           isTyping: typing => this.setState({ typing }), typing: this.state.typing,
-          sendMessage: () => sendMessage(this.state.message, thread)
+          sendMessage: () => sendMessage(this.state.message, thread), party: this.state.party,
+          member: this.state.member, onMemberChange: member => this.setState({ member }),
+          remember: m => this.setState(state => ({ party: state.party.concat(m), member: '' })),
+          dismember: m => this.setState(state => ({ party: state.party.filter(_ => _ !== m) }))
         }, actions: {
-          emit, updateMessage, deleteMessage, deleteThread, fetchThreads, joinThread, leaveThread
+          emit, updateMessage, deleteMessage, deleteThread, fetchThreads, createThread, joinThread, leaveThread
         }
       })}
       <footer></footer>
@@ -126,18 +133,19 @@ export default class Messenger extends React.Component {
   }
   fetchThreads() {
     return this.emit('thread', 'fetch', {}, ({ data, error }) => {
-      console.log(data, error);
+      const { messages = [], threads = [] } = data || {};
+      console.log('fetching threads: ',messages, threads, error);
       return data ? this.props.dispatch({
-        type: 'MESSENGER_FETCH_THREADS', threads: data.threads || []
+        type: 'MESSENGER_FETCH_THREADS', threads, messages
       }) : console.log(error);
     });
   }
   createThread(title, party) {
     return this.emit('thread', 'create', { title, party }, ({ data, error }) => {
       const { thread } = data;
-      return data && thread ? this.props.dispatch({
+      return data && thread ? this.setState({ title: '', party: [] }, () => this.props.dispatch({
         type: 'MESSENGER_CREATE_THREAD', thread
-      }) : console.log(error);
+      })) : console.log(error);
     });
   }
   editThread(id, party, title) {
@@ -156,11 +164,11 @@ export default class Messenger extends React.Component {
   }
   joinThread(id) {
     return this.emit('thread', 'join', { thread: id }, ({ data, error }) => {
-      console.log(data, error, data.thread, data.messages);
-      return data && data.thread ? this.props.dispatch({
-        type: 'MESSENGER_JOIN_THREAD', thread: data.thread, messages: data.messages, party: data.thread.party
-      }) && this.props.router.push(`/messenger/${data.thread._id}`) : console.log(error);
-      //
+      const { thread, messages, time } = data || {};
+      console.log(data, error, thread, messages);
+      return thread ? this.props.dispatch({
+        type: 'MESSENGER_JOIN_THREAD', thread, messages, party: thread.party, time
+      }) && this.props.router.push(`/messenger/thread/${thread._id}`) : console.log(error);
     });
   }
   leaveThread(id) {

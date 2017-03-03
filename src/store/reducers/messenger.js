@@ -39,9 +39,7 @@ const [
 ];
 
 function mergeMessages(messages, newMessages) {
-  return messages.reduce((a, b) => {
-
-  }, [...newMessages]);
+  return messages.reduce((a, b) => a.find(_a => b._id === _a._id) ? a : [b, ...a], ([]).concat(newMessages));
 }
 
 export default function messenger (state = {
@@ -77,15 +75,15 @@ export default function messenger (state = {
     default : return state;
     case ERROR: return { ...state, errors: state.errors.concat(error) };
     case FETCH_MESSAGES: return { ...state, messages };
-    case NEW_MESSAGE: return { ...state, messages: state.messages.concat(message) };
+    case NEW_MESSAGE: return { ...state, messages: mergeMessages(state.messages, message) };
     case UPDATE_MESSAGE: {
       state.messages[state.messages.findIndex(({ _id }) => _id === message._id)] = message;
       return { ...state, messages: [...state.messages] };
     }
     case DELETE_MESSAGE: return { ...state, messages: state.messages.filter(({ _id }) => _id !== message._id) };
 
-    case FETCH_THREADS: return { ...state, threads };
-    case JOIN_THREAD: return { ...state, thread, messages: state.messages.concat(messages), party: party };
+    case FETCH_THREADS: return { ...state, threads, messages: mergeMessages(state.messages, messages) };
+    case JOIN_THREAD: return { ...state, thread, party, messages: mergeMessages(state.messages, messages) };
     case LEAVE_THREAD: return { ...state, thread: null, party: [] };
     case CREATE_THREAD: return { ...state, threads: state.threads.concat(thread) };
     case UPDATE_THREAD: return {
@@ -93,8 +91,8 @@ export default function messenger (state = {
     };
     case REMOVE_THREAD: return { ...state, threads: state.threads.filter(_thread => _thread._id !== thread._id) };
 
-    case JOINED_EVENT: return { ...state, thread, party: state.party.concat({id: user, present: true, time: Date.now()}) };
-    case LEFT_EVENT: return { ...state, thread, party: state.party.filter(m => user !== m.id) };
+    case JOINED_EVENT: return { ...state, thread, party };
+    case LEFT_EVENT: return { ...state, thread, party };
     case TYPING_EVENT: return {
       ...state, typing: typing ? state.typing.concat(event.user) : state.typing.filter(id => event.user === id ? false : true)
     };

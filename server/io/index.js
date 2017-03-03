@@ -14,10 +14,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = function NameSpaceIO (io, app, callback) {
   io.on('connection', (socket) => {
-    console.log('New user connected');
+    console.log(`New user connected, id: ${socket.id}`);
 
     socket.on('disconnect', () => {
-      console.log('User was disconnected');
+      console.log(`User was disconnected, id: ${socket.id}`);
     });
   });
 
@@ -27,12 +27,6 @@ module.exports = function NameSpaceIO (io, app, callback) {
     }, JWT_SECRET);
     next();
   });
-
-  const namespaces = {
-    users: Users(io),
-    threads: Threads(io),
-    todos: Todos(io)
-  };
 
   const utility = {
     _uploadFile(stream, { filename, content_type, options }, callback) {
@@ -51,6 +45,11 @@ module.exports = function NameSpaceIO (io, app, callback) {
 
   io.use((socket, next) => {
     const { id, request, conn, client, rooms } = socket;
+    conn._user = null;
+    conn.user = user => {
+      console.log('conn.user fired: ',user,' _user: ',conn._user);
+      return user ? conn._user = user : conn._user || null;
+    };
     // :internal protocol. emitted via ('message', { type: 'system' })
     // never directly called by the user; a relay message via private client code.
     // create a digestible code that is consumed by the internal method.
@@ -64,8 +63,19 @@ module.exports = function NameSpaceIO (io, app, callback) {
     return next();
   });
 
+  const namespaces = {
+    users: Users(io),
+    threads: Threads(io),
+    todos: Todos(io)
+  };
+
   io.sockets.on('connection', function (socket) {
     const { id, request, conn, client, rooms } = socket;
+    // socket.client: server,conn,encoder,decoder,id,request,onclose,
+    // ondata,onerror,ondecoded,sockets,nsps,connectBuffer
+    // socket.conn: id,server,upgrading,upgraded,readyState,writeBuffer,packetsFn,sentCallbackFn,cleanupFn,
+    // request,remoteAddress,checkIntervalTimer,upgradeTimeoutTimer,pingTimeoutTimer,
+    // transport,_events,_eventsCount.
     socket.on('message', function onMessage (message, fn = () => undefined) {
       const { type, name, data = {} } = JSON.parse(message || {});
       console.log(`Socket id: ${id}, Message - type: ${type}`);

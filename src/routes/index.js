@@ -45,8 +45,9 @@ export default (
     </Route>
 
     <Route name="Messenger" path="messenger" component={Messenger}>
-      <IndexRoute component={Threads} />
-      <Route name="Thread" path=":id" component={Composer} />
+      <IndexRoute name="Threads" component={Threads} />
+      <Route name="New Thread" path="new" component={Composer} />
+      <Route name="Messages" path="thread/:id" component={Composer} />
     </Route>
 
     <Route name="Media" path="media" />

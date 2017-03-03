@@ -37,17 +37,29 @@ export default class Authentication extends PureComponent {
   send(action, data, fn) {
     const send = this.props.socket['/users'].send, id = this.props.socket['/users'].id;
     return send({ type: 'method', name: 'user', action, data: { ...data, id } }, message => {
-      console.log('acknowledgement message: ',message);
+      console.log('/users acknowledgement message: ',message);
       fn(message);
     });
   }
   login(e, p) {
-    const { email = e, password = p } = this.state;
+    const { email = e, password = p } = this.state, dispatch = this.props.dispatch;
     console.log(email, password);
     return this.send('login:email',{ email, password }, ({ data, error }) => {
       if (error) return this.setState({ error });
       const { user, token } = data;
+      this.props.tokens.set('login.token', token);
+      dispatch({ type: '@@user/LOGIN', user, token });
+      return this.props.router.push('/account');
     });
+  }
+  logout() {
+    return this.props.user ? this.send('logout', ({ data, error }) => {
+      if (error) return this.setState({ error });
+      const { user, token } = data;
+      this.props.tokens.remove('login.token');
+      dispatch({ type: '@@user/LOGOUT' });
+      return this.props.router.push('/');
+    }) : null;
   }
   register(e, p) {
     const { email = e, password = p } = this.state, dispatch = this.props.dispatch;
@@ -55,8 +67,9 @@ export default class Authentication extends PureComponent {
     return this.send('create',{ email, password }, ({ data, error }) => {
       if (error) return this.setState({ error });
       const { user, token } = data;
-      dispatch({ type: '@@tokens/SET', key: 'login.token', value: token });
-      return dispatch({ type: '@@user/LOGIN', user, token });
+      this.props.tokens.set('login.token', token);
+      dispatch({ type: '@@user/LOGIN', user, token });
+      return this.router.push('/account');
     });
   }
   recover(e) {

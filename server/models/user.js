@@ -65,9 +65,13 @@ const UserSchema = new mongoose.Schema({
   profile: {
     type: ProfileSchema
   },
+  loc: {
+    type: LocSchema
+  },
   messages: {
     type: Array
   },
+  online: Boolean,
   // username: {
   //   type: String,
   //   trim: true,
@@ -96,6 +100,9 @@ UserSchema.post('remove', function(doc) {
 
 // members on the Model
 UserSchema.statics = {
+  authenticate(token) {
+
+  },
   create({ email, password }, options) {
     const User = this;
     const user = new User({
@@ -120,31 +127,58 @@ UserSchema.statics = {
     return this.findOne({ username: username.toLowerCase() });
   },
   findByToken (token) {
-    return this.validateToken('auth', token);
+    return this.validateTokenAndFindUser('auth', token);
   },
-  sendVerificationEmail(email) {},
+  sendVerificationEmail(email) {
+    return this.findByEmail(email).then(user => {
+      return user.generateVerificationToken();
+    },error => Promise.reject(error));
+  },
+  validateToken(access, token, secret = JWT_SECRET) {
+    let decoded;
+    try { decoded = jwt.verify(token, secret); } catch (e) { return Promise.reject(e); }
+    return Promise.resolve({ decoded, token, access });
+  },
+  validateTokenAndFindUser(access, token) {
+    return this.validateToken(access, token).then(({ decoded, token, access }) => {
+      return this.findOne({
+        ...decoded, 'tokens.token': token, 'tokens.access': access
+      });
+    }).catch(error => Promise.reject(error));
+  },
   verifyEmail(token) {
-    return this.validateToken('verify', token).next(user => {
+    return this.validateTokenAndFindUser('verify', token).next(user => {
       user.email.verified = true;
       return user.save();
-    }).catch(error => error);
+    }).catch(error => Promise.reject(error));
   },
-  validateToken(access, token) {
-    var decoded;
-    try { decoded = jwt.verify(token, JWT_SECRET); } catch (e) { return Promise.reject(e); }
-
-    return this.findOne({
-      ...decoded, 'tokens.token': token, 'tokens.access': access
-    });
+  loginUser({ email, username, token }, password) {
+    const User = this, test = email ?(
+      User.findByEmail(email)
+    ): username ?(
+      User.findByUsername(username)
+    ): token ?(
+      User.findByToken(token)
+    ): false;
+    console.log('logging in: ', email, username, password, token);
+    return test ?(
+      test.then(user => {
+        return (token ? Promise.resolve(true) :(
+          user.checkPassword(password, user.password)
+        )).then(authentic => {
+          if (authentic) {
+            user.online = true;
+            return user.save();
+          } else return Promise.reject(new Error('incorrect password.'));
+        }, error => Promise.reject(error));
+      }, error => Promise.reject(error))
+    ): Promise.reject(new Error('credentials required.'));
   },
-  loginUser ({ email, username }, password) {
-    const User = this, use = email ? User.findByEmail(email) : username ? User.findByUsername(username) : null;
-    console.log('logging in: ', email, password);
-    return use ? use.then(user => {
-      return user.checkPassword(password, user.password).then(verdict => {
-        return verdict ? Promise.resolve(user) : Promise.reject(new Error('incorrect password.'));
-      },error => Promise.reject(error));
-    }, error => Promise.reject(error)) : Promise.reject(new Error('credentials required.'));
+  logoutUser(_id) {
+    return this.findOne({ _id }).then(user => {
+      user.online = false;
+      return user.save();
+    }, error => Promise.reject(error));
   }
 };
 
@@ -181,8 +215,13 @@ UserSchema.methods = {
       });
     });
   },
-  generateToken(access, o = {}) {
-    const token = jwt.sign({ ...o, access }, JWT_SECRET);
+  generateAuthenticator() {
+    const user = this;
+    const { _id, email } = user;
+    const token = jwt.sign({ email }, _id.toHexString());
+  },
+  generateToken(access, o = {}, secret = JWT_SECRET) {
+    const token = jwt.sign({ ...o, access }, secret);
     console.log('generating token: ', token);
     this.tokens.push({ access, token });
     return this.save().then(() => token);

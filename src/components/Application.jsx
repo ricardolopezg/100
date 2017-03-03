@@ -19,16 +19,23 @@ class Application extends PureComponent {
       logs: []
     }
   }
+  componentWillMount() {
+    const token = localStorage.getItem('login.token');
+    this.props.socket.connect('/');
+  }
+  componentWillUnmount() {
+    this.props.socket['/'].disconnect();
+  }
 
   render () {
     const { props, state, compareAndCast } = this
-    const { dispatch, user, socket, messenger, todo, router } = props
+    const { dispatch, user, tokens, socket, messenger, todo, router } = props
     return (<main id="main" role="main" ref={m => m ? this.main = m : null}>
       <section className="navigator" id="nav">
         <Navigation />
         <section className="main-content">{
           props.children ? compareAndCast(props.children, {
-            app: {}, dispatch, user, todo, messenger, socket, router
+            app: {}, dispatch, user, tokens, todo, messenger, socket, router
           }) : null
         }</section>
         <footer>
@@ -77,7 +84,7 @@ export default connect(
             const key = localStorage.key(i), value = localStorage.getItem(key);
             set[key] = value;
           }
-          return dispatch({ type: '@@tokens/KEYS', set })
+          return dispatch({ type: '@@tokens/KEYS', set });
         },
         set: (key, value) => {
           localStorage.setItem(key, value);

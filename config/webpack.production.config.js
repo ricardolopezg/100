@@ -17,6 +17,6 @@ webpackCommonConfig.plugins = webpackCommonConfig.plugins.concat([
   })
 ]);
 
-// webpackCommonConfig.output.publicPath = 'http://www.100.com';
+webpackCommonConfig.output.publicPath = 'https://one00.herokuapp.com/';
 
 module.exports = webpackCommonConfig;
